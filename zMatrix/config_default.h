@@ -1,13 +1,18 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
+#include <Windows.h>
 
-#define DEBUG
+//#define DEBUG
 
 #if defined(DEBUG)
-#define _log_(str) do{\
-cout << "[" << __FILE__<<"]" << "<" << __func__ << ">" << "(" << __LINE__ << ")" << str << endl;\
+#define _InsightLog_(str) do{\
+	char buf[1000];\
+	sprintf_s(buf, "--------------------------------	[%s]<%s>(%d)%s	----------------------------------------\n", __FILE__, __func__, __LINE__, str);\
+	OutputDebugString(buf);\
 }while (0)
-#define __log__(str) cout << "[" << __FILE__<<"]" << "<" << __func__ << ">" << "(" << __LINE__ << ")" << str << endl;
+
+#define _log_(str)  cout << "[" << __FILE__<<"]" << "<" << __func__ << ">" << "(" << __LINE__ << ")" << str << endl;
+
 #else
 #define _log_(str)
 #endif

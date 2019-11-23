@@ -2,6 +2,7 @@
 #define _ZMATRIX_H
 
 #include <iostream>
+#include <iomanip>
 #include "config_default.h"
 using namespace std;
 
@@ -15,7 +16,7 @@ public:
 
 	Matrix(const Matrix& m);
 	//6.1
-	Matrix(initializer_list<double> il);//使用数组初始化，形如a[2] = {0,1};mat(a,2);
+	Matrix(initializer_list<double> il);//使用数组初始化，形如a[2] = {0,1};mat(a,2);	//zmz
 
 	~Matrix();
 	
@@ -64,6 +65,12 @@ public:
 	Matrix cross(const Matrix &m);	//叉乘
 	Matrix conv(const Matrix &m);	//卷积
 		
+	//20191121-------------------------------
+	Matrix rref_bad(const Matrix& M);	//化矩阵为行阶梯矩阵
+	Matrix rref_wiki();	//化矩阵为行阶梯矩阵
+	int argMax(int col, int row_start, int row_end);	//寻找列主元
+	void swap_rows(int row1, int row2);		//交换两行数据	
+	//-------------------------------20191122
 
 	//成员变量
 	int rows, cols;
@@ -73,7 +80,7 @@ private:
 	size_t _size;	//size of matrix
 	int *refcount;	//pointer to the reference counter
 	void initEmpty();	
-
+	
 };
 
 //重载矩阵运算符
@@ -86,5 +93,8 @@ bool operator != (const Matrix& m1,const Matrix &m2);
 Matrix operator +(const Matrix& m1, const Matrix &m2);
 Matrix operator -(const Matrix &m1, const Matrix &m2);
 Matrix operator *(const Matrix &m1, const Matrix &m2);
+
+
+
 
 #endif
