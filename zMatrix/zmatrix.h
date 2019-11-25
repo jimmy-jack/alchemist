@@ -58,16 +58,20 @@ public:
 
 	//其他矩阵操作
 	//待完善
+	//20191125------------------------------------
 	size_t rank();	//矩阵的秩
-	Matrix inv();	//逆
+	Matrix inv();	//逆	//bug
 	Matrix transpose();	//转置
 	Matrix dot(const Matrix& m);	//点乘
 	Matrix cross(const Matrix &m);	//叉乘
+	//------------------------------------
+
 	Matrix conv(const Matrix &m);	//卷积
 		
 	//20191121-------------------------------
 	Matrix rref_bad(const Matrix& M);	//化矩阵为行阶梯矩阵
 	Matrix rref_wiki();	//化矩阵为行阶梯矩阵
+	Matrix rref_wiki_2();
 	int argMax(int col, int row_start, int row_end);	//寻找列主元
 	void swap_rows(int row1, int row2);		//交换两行数据	
 	//-------------------------------20191122

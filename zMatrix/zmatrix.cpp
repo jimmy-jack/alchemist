@@ -8,6 +8,195 @@ double Matrix::at(int _rows, int _cols)
 		return (*this)[_rows][_cols];
 }
 
+//求矩阵的秩：行阶梯矩阵不全为0行的个数
+size_t Matrix::rank()
+{
+	size_t count = 0;
+	Matrix rrefMat = this->rref_wiki();
+	double eps = 1e-10;
+
+	for (int i = 0; i < rrefMat.rows; ++i)
+	{
+		for (int j = 0; j < rrefMat.cols; ++j)
+		{
+			if (rrefMat[i][j] > eps)
+			{
+				count++;
+				break;
+			}
+		}
+	}
+
+	return count;
+}
+
+//求矩阵的逆
+Matrix Matrix::inv()
+{	
+	try
+	{
+		if (this->rows != this->cols)
+			throw runtime_error("This is not a square Matrix");
+	}
+	catch (runtime_error err)
+	{
+		cout << err.what() << endl;
+		return Matrix();
+	}
+	
+	Matrix zgMat(this->rows, this->cols + this->cols);
+	Matrix eyeMat(this->rows, this->cols);
+	eyeMat.eye();
+	for (int i = 0; i < zgMat.rows; ++i)
+	{
+		for (int j = 0; j < zgMat.cols; ++j)
+		{
+			if (j < this->cols)
+			{
+				zgMat[i][j] = data[i * cols + j];
+			}
+			else
+			{
+				zgMat[i][j] = eyeMat[i][j - this->cols];
+			}
+		}	
+	}
+
+	Matrix invMat_zg = zgMat.clone();
+	int m = invMat_zg.rows;
+	int n = invMat_zg.cols / 2;
+	
+	int h = 0, k = 0;
+	while (h < m && k < n)
+	{
+		//用第h行消第k列
+		//1,寻找第k列主元
+		int i_max = invMat_zg.argMax(k, h, m - 1);
+		//2,将主元行置顶，消去主元行以下元素
+		if (invMat_zg[i_max][k] == 0)
+		{
+			k++;
+		}
+		else
+		{
+			invMat_zg.swap_rows(h, i_max);
+			for (int i = h + 1; i < m; ++i)
+			{
+				double f = invMat_zg[i][k] / invMat_zg[h][k];
+				invMat_zg[i][k] = 0;
+				for (int j = k + 1; j < n * 2; ++j)
+				{
+					invMat_zg[i][j] -= invMat_zg[h][j] * f;
+				}
+			}
+			h++;
+			k++;
+		}
+	}
+
+	h = m - 1;
+	k = n - 1;
+	while (h >= 0 && k >= 0)
+	{
+		int i_max = invMat_zg.argMax(k, 0, h);
+		if (invMat_zg[i_max][k] == 0)
+		{
+			k--;
+		}
+		else
+		{
+			invMat_zg.swap_rows(h, i_max);
+			for (int i = h - 1; i > 0; --i)
+			{
+				double f = invMat_zg[i][k] / invMat_zg[h][k];
+				invMat_zg[i][k] = 0;
+				for (int j = k - 1; j > 0; --j)
+				{
+					invMat_zg[i][j] -= invMat_zg[h][j] * f;
+				}
+
+				for (int j = k - 1; j < invMat_zg.cols; ++j)
+				{
+					invMat_zg[i][j] -= invMat_zg[h][j] * f;
+				}
+			}
+			h--;
+			k--;
+		}
+	}
+
+	return invMat_zg;
+}
+
+Matrix Matrix::transpose()
+{
+	Matrix T(cols, rows);
+	for (int i = 0; i < T.rows; ++i)
+	{
+		for (int j = 0; j < T.cols; ++j)
+		{
+			T[i][j] = data[j * cols + i];
+		}
+	}
+
+	return T;
+}
+
+Matrix Matrix::dot(const Matrix & m)
+{
+	try
+	{
+		if (cols != m.cols || rows != m.rows)
+		{
+			throw runtime_error("two different dimension matrixs");
+		}
+	}
+	catch (runtime_error err)
+	{
+		cout << err.what() << endl;
+		return Matrix();
+	}
+	Matrix temp(rows, cols);
+	temp.zeros();
+	for (int i = 0; i < rows; ++i)
+	{
+		for (int j = 0; j < m.cols; ++j)
+		{
+			temp[i][j] = data[i * cols + j] * m[i][j];
+		}
+	}
+	return temp;
+}
+
+Matrix Matrix::cross(const Matrix & m)
+{
+	try
+	{
+		if (cols != m.rows)
+		{
+			throw runtime_error("m1.cols != m2.rows");
+		}
+	}
+	catch (runtime_error err)
+	{
+		cout << err.what() << endl;
+		return Matrix();
+	}
+	Matrix temp(rows, m.cols);
+	temp.zeros();
+	for (int i = 0; i < rows; ++i)
+	{
+		for (int j = 0; j < m.cols; ++j)
+		{
+			for (int k = 0; k < cols; ++k)
+			{
+				temp[i][j] += data[i * cols + k] * m[k][j];
+			}
+		}
+	}
+	return temp;
+}
+
 /**
 * @berif 将矩阵初始化为空矩阵 
 */
@@ -556,6 +745,40 @@ Matrix Matrix::rref_wiki()
 		}
 	}
 
+	return R;
+}
+
+Matrix Matrix::rref_wiki_2()
+{
+	Matrix R = this->clone();
+	int m = R.rows;
+	int n = R.cols;
+
+	int h = m - 1;
+	int k = n - 1;
+	while (h >= 0 && k >= 0)
+	{
+		int i_max = R.argMax(k, 0, h);
+		if (R[i_max][k] == 0)
+		{
+			k--;
+		}
+		else
+		{
+			R.swap_rows(h, i_max);
+			for (int i = h - 1; i > 0; --i)
+			{
+				double f = R[i][k] / R[h][k];
+				R[i][k] = 0;
+				for (int j = k - 1; j > 0; --j)
+				{
+					R[i][j] -= R[h][j] * f;
+				}
+			}
+			h--;
+			k--;
+		}
+	}
 	return R;
 }
 

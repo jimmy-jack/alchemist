@@ -95,7 +95,7 @@ void myTest()
 	cout << swapMat;
 	swapMat.swap_rows(0,2);
 	cout << "after swap:" << endl << swapMat;
-	cout << swapMat.argMax(0, 1, 2) << endl;
+	//cout << swapMat.argMax(0, 1, 2) << endl;
 
 	Matrix rrefMat_src(4, 5);
 	rrefMat_src =
@@ -108,7 +108,20 @@ void myTest()
 	cout << rrefMat_src;
 	Matrix rrefMat_dst = rrefMat_src.rref_wiki();
 	cout << rrefMat_dst;
+	cout << "rank = " <<rrefMat_src.rank() << endl;
 
+	Matrix invMat_src(3, 3);
+	invMat_src =
+	{
+		0,2,-1,
+		1,1,2,
+		-1,-1,-1
+	};
+	Matrix invMat_dst = invMat_src.inv();
+	cout << "inv:" << endl << invMat_dst;
+
+	Matrix transMat = rrefMat_src.transpose();
+	cout << "transMat" << endl << transMat;
 
 	cout << "-----------------------------------------	test end	-----------------------------------------------" << endl;
 }
