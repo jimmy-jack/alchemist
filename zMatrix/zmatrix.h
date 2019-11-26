@@ -66,8 +66,11 @@ public:
 	Matrix cross(const Matrix &m);	//叉乘
 	//------------------------------------
 
-	Matrix conv(const Matrix &m);	//卷积
-		
+	//20191126------------------------------------
+	Matrix conv(const Matrix &m);	//卷积,
+	Matrix converse() const;	//对矩阵（卷积核）进行翻转
+	//----------------------------------------
+
 	//20191121-------------------------------
 	Matrix rref_bad(const Matrix& M);	//化矩阵为行阶梯矩阵
 	Matrix rref_wiki();	//化矩阵为行阶梯矩阵

@@ -86,42 +86,67 @@ void myTest()
 //	cout << dotM;
 //	cout << matA.at(0, 0) << endl;
 
-	//test rank
-	Matrix swapMat(3, 2);
-	swapMat = { 1,2,
-		3,4,
-		5,6
-	};
-	cout << swapMat;
-	swapMat.swap_rows(0,2);
-	cout << "after swap:" << endl << swapMat;
-	//cout << swapMat.argMax(0, 1, 2) << endl;
+	//test rank-----------------------------------------------------------------------------------------
+	//Matrix swapMat(3, 2);
+	//swapMat = { 1,2,
+	//	3,4,
+	//	5,6
+	//};
+	//cout << swapMat;
+	//swapMat.swap_rows(0,2);
+	//cout << "after swap:" << endl << swapMat;
+	////cout << swapMat.argMax(0, 1, 2) << endl;
 
-	Matrix rrefMat_src(4, 5);
-	rrefMat_src =
+	//Matrix rrefMat_src(4, 5);
+	//rrefMat_src =
+	//{
+	//	1,1,0,-3,-1,
+	//	1,-1,2,-1,0,
+	//	4,-2,6,3,-4,
+	//	2,4,-2,4,-7
+	//};
+	//cout << rrefMat_src;
+	//Matrix rrefMat_dst = rrefMat_src.rref_wiki();
+	//cout << rrefMat_dst;
+	//cout << "rank = " <<rrefMat_src.rank() << endl;
+
+	//Matrix invMat_src(3, 3);
+	//invMat_src =
+	//{
+	//	0,2,-1,
+	//	1,1,2,
+	//	-1,-1,-1
+	//};
+	//Matrix invMat_dst = invMat_src.inv();
+	//cout << "inv:" << endl << invMat_dst;
+
+	//Matrix transMat = rrefMat_src.transpose();
+	//cout << "transMat" << endl << transMat;
+
+	//Matrix convMat = invMat_src.converse();
+	//cout << "converseMat" << endl << convMat;
+	//-----------------------------------------------------------------------------------------
+
+	//¾í»ý
+	Matrix src_convMat(5, 5);
+	src_convMat =
 	{
-		1,1,0,-3,-1,
-		1,-1,2,-1,0,
-		4,-2,6,3,-4,
-		2,4,-2,4,-7
+		1,1,1,0,0,
+		0,1,1,1,0,
+		0,0,1,1,1,
+		0,0,1,1,0,
+		0,1,1,0,0
 	};
-	cout << rrefMat_src;
-	Matrix rrefMat_dst = rrefMat_src.rref_wiki();
-	cout << rrefMat_dst;
-	cout << "rank = " <<rrefMat_src.rank() << endl;
-
-	Matrix invMat_src(3, 3);
-	invMat_src =
+	Matrix sigMat(3, 3);
+	sigMat =
 	{
-		0,2,-1,
-		1,1,2,
-		-1,-1,-1
+		1,0,1,
+		0,1,0,
+		1,0,1
 	};
-	Matrix invMat_dst = invMat_src.inv();
-	cout << "inv:" << endl << invMat_dst;
-
-	Matrix transMat = rrefMat_src.transpose();
-	cout << "transMat" << endl << transMat;
+	Matrix dst_conMat(3, 3);
+	dst_conMat = src_convMat.conv(sigMat);
+	cout << "conv operation" << endl << dst_conMat;
 
 	cout << "-----------------------------------------	test end	-----------------------------------------------" << endl;
 }

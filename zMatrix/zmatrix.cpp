@@ -641,6 +641,96 @@ Matrix operator *(const Matrix &m1, const Matrix &m2)
 	return temp;
 }
 
+//valid型卷积，same型和full型暂时没实现（填充0）
+Matrix Matrix::conv(const Matrix & m)
+{
+	try
+	{
+		if (m.cols != m.rows)
+		{
+			throw runtime_error("核矩阵不为方阵");
+		}
+		if (this->cols < m.cols || this->rows < m.rows)
+		{
+			throw runtime_error("核矩阵太大");
+		}
+		if (this->cols % 2 == 0 || m.cols % 2 == 0)
+		{
+			throw runtime_error("矩阵维度不为奇数");
+		}
+	}
+	catch (runtime_error err)
+	{
+		cout << err.what() << endl;
+		return Matrix();
+	}
+	
+	Matrix converMat = m.converse();
+	int src_halfLen = this->rows / 2;
+	int ker_halfLen = m.rows / 2;
+	int res_halfLen = src_halfLen - ker_halfLen;
+	int resDim = res_halfLen * 2 + 1;
+	Matrix resMat(resDim, resDim);
+	Matrix temp(rows, cols);
+	temp.zeros();
+	
+	int u_start = ker_halfLen;
+	int u_end = this->rows - 1 - ker_halfLen;
+	int v_start = ker_halfLen;
+	int v_end = this->cols - 1 - ker_halfLen;
+	for (int u = u_start; u <= u_end; ++u)
+	{
+		for (int v = v_start; v <= v_end; ++v)
+		{
+			for (int i = -ker_halfLen; i <= ker_halfLen; i++)
+			{
+				for (int j = -ker_halfLen; j <= ker_halfLen; j++)
+				{
+					temp[u][v] += (*this)[u + i][v + j] * converMat[i + ker_halfLen][j + ker_halfLen];
+				}
+			}
+		}
+	}
+	
+	for (int i = 0; i < resDim; i++)
+	{
+		for (int j = 0; j < resDim; j++)
+		{
+			resMat[i][j] = temp[i + ker_halfLen][j + ker_halfLen];
+		}
+	}
+
+	return resMat;
+}
+
+Matrix Matrix::converse() const
+{
+	try
+	{
+		if (this->cols != this->rows)
+		{
+			throw runtime_error("核矩阵不为方阵");
+		}
+	}
+	catch (runtime_error err)
+	{
+		cout << err.what() << endl;
+		return Matrix();
+	}
+
+	int r = this->rows;
+	int c = this->cols;
+	Matrix temp(this->rows,this->cols);
+	for (int i = 0; i < r; i++)
+	{
+		for (int j = 0; j < c; j++)
+		{
+			temp[i][j] = (*this)[r - 1 - i][c - 1 - j];
+		}
+	}
+	return temp;
+}
+
 //将矩阵化为行阶梯矩阵
 Matrix Matrix::rref_bad(const Matrix& M)
 {
